@@ -25,7 +25,8 @@
     "mongoose": "^5.4.19",
     "mysql2": "^1.6.5",
     "request": "^2.88.0",
-    "sequelize": "^4.38.0"
+    "sequelize": "^4.38.0",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.6",

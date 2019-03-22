@@ -3,12 +3,13 @@
 const Promise = require('bluebird');
 const mongoose = Promise.promisifyAll(require('mongoose'));
 const config = require('../../../configs/config.js');
+const logger = require('../logger');
 
 mongoose.set('debug', true);
 
-const serverStr = `${config.dbs.mongo.user}:${config.dbs.mongo.password}@${config.dbs.mongo.host}:${config.dbs.mongo.port}`;
+const serverStr = `${config.dbs.mongo.host}:${config.dbs.mongo.port}`;
 const connStr = `mongodb://${serverStr}/${config.dbs.mongo.dbs.CHAT}`;
-const conn = mongoose.createConnection(connStr, config.mongo.options, (err) => {
+const conn = mongoose.createConnection(connStr, config.dbs.mongo.options, (err) => {
   if (err) {
     logger.warn('mongodb connection error', err);
   }
