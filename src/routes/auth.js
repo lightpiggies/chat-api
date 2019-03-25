@@ -5,6 +5,7 @@ const _ = require('lodash');
 const moment = require('moment');
 const UserService = require('../service/user');
 const UserLoginStatus = require('../models/mongo/user_login_status');
+const CONSTANT = require('../utils/constants');
 
 router.post('/register', async (ctx, next) => {
   const user = await UserService.registerUser(ctx.request.body);
@@ -33,14 +34,15 @@ router.post('/login', async (ctx, next) => {
     userLogins.login_device = [{ ...device, login_at: loginTime }];
     await userLogins.save();
   } else {
-    // 此人有登陆过的设备
-    const deviceIds = _.map(userLogins.login_device, 'device_id');
-    if (!deviceIds.includes(device.device_id)) {
-      const newDevices = _.drop(userLogins.login_device); // 删掉第一个设备
-      newDevices.push({ ...device, login_at: loginTime }); // 把新设备放到尾部
-      userLogins.login_device = newDevices;
-      await userLogins.save();
+    // 此人有登录过的设备
+    UserLoginStatus.pullFromMongooseArray(userLogins.login_device, d => (d.device_id === device.device_id));
+    userLogins.login_device.push({ ...device, login_at: loginTime });
+    const deviceLimit = CONSTANT.USER_LOGIN_LIMIT.MAX_DEVICES;
+    const deviceLength = userLogins.login_device.length;
+    if (deviceLength > deviceLimit) { // 当设备数超过限制, 删掉以前的设备
+      UserLoginStatus.dropFromMongooseArray(userLogins.login_device, deviceLength - deviceLimit);
     }
+    await userLogins.save();
   }
 
   // todo: 应该返回用户的基本信息
