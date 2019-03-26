@@ -9,8 +9,10 @@ class Auth {
     let login = false;
     if (ctx.query.user_id && ctx.query.device_id) {
       const loginUser = await UserLoginStatus.findOne().byUid(ctx.query.user_id);
-      if (loginUser && _.map(loginUser.login_device, 'device_id').includes(ctx.query.device_id)) {
+      if (loginUser && _.map(loginUser.login_device, 'device_id').includes(ctx.query.device_id)) { // ? exists
         login = true;
+        ctx.state.user = ctx.query.user_id;
+        ctx.state.device = ctx.query.device_id;
       }
     }
     if (!login) throw new ChatError(ChatError.CODES.UNAUTHORIZED, 'Unauthorized');
