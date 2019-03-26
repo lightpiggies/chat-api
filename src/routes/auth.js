@@ -7,13 +7,12 @@ const UserService = require('../service/user');
 const UserLoginStatus = require('../models/mongo/user_login_status');
 const CONSTANT = require('../utils/constants');
 
-router.post('/register', async (ctx, next) => {
+router.post('/register', async (ctx) => {
   const user = await UserService.registerUser(ctx.request.body);
   ctx.state.data = user;
-  await next();
 });
 
-router.post('/login', async (ctx, next) => {
+router.post('/login', async (ctx) => {
   const userLoginInfo = await UserService.userLogin(ctx.request.body);
   const loginTime = moment();
   const uid = userLoginInfo.user_id;
@@ -51,7 +50,6 @@ router.post('/login', async (ctx, next) => {
     ...device,
     login_at: loginTime,
   };
-  await next();
 });
 
 module.exports = router;
