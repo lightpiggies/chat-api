@@ -9,11 +9,14 @@ const schema = new Schema({
   user_id: {
     type: String,
     index: true,
+    unique: true, // todo: add validation
   },
   login_device: [{ device_id: String, device_type: String, login_at: Date }],
 });
 
-// static method
+/**
+ * returns [] when find nothing
+ */
 schema.statics.findByUid = function findByUid(uid) {
   return this.find({ user_id: uid });
 };
@@ -32,7 +35,9 @@ schema.statics.dropFromMongooseArray = function dropFromMongooseArray(mongooseAr
   removeObjFromArray(mongooseArray, subDocTobeDrop);
 };
 
-// query helper
+/**
+ * returns null when find nothing
+ */
 schema.query.byUid = function byUid(uid) {
   return this.where({ user_id: uid });
 };
