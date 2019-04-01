@@ -6,6 +6,16 @@ const moment = require('moment');
 const UserService = require('../service/user');
 const UserLoginStatus = require('../models/mongo/user_login_status');
 const CONSTANT = require('../utils/constants');
+const requestFilter = require('../filter/request');
+
+router.get('/username_exists',
+  requestFilter.queryNotNullOrEmptyFilter(['username']),
+  async (ctx) => {
+    const exists = await UserService.usernameExists(ctx.query.username);
+    ctx.state.data = {
+      exists,
+    };
+  });
 
 router.post('/register', async (ctx) => {
   const user = await UserService.registerUser(ctx.request.body);

@@ -120,3 +120,29 @@ DELETE /users/:user_id/login_devices/:device_id
     }
 }
 ```
+
+### 1.6 检查用户名是否已被注册
+```
+GET /auth/username_exist
+```
+
+* 参数
+
+query:
+
+```
+{
+    "username": "lightPiggy"
+}
+```
+
+* 返回
+
+```
+{
+    "errcode": 0,
+    "data": {
+        "exists": true
+    }
+}
+```

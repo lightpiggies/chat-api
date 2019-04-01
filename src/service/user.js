@@ -35,11 +35,26 @@ class UserService extends Fetch {
       method: 'POST',
       path: 'auth/login',
       params: infos,
-    }).catch(e => {
+    }).catch((e) => {
       if (e.details.errcode === 11001) throw new ChatError(ChatError.CODES.USER_NOT_EXIST, '用户不存在');
       if (e.details.errcode === 11002) throw new ChatError(ChatError.CODES.USER_PASSWORD_ERR, '密码错误');
       throw e;
     });
+  }
+
+  /**
+   * 检查用户名是否已存在
+   * @param {string} username
+   * @returns {boolean}
+   */
+  static usernameExists(username) {
+    return UserService.doRequest({
+      method: 'GET',
+      path: 'users/',
+      qs: {
+        filter: `{"username":"${username}"}`,
+      },
+    }).then(users => users.total > 0);
   }
 }
 
